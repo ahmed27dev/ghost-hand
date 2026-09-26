@@ -1,7 +1,0 @@
-{
-  "steps": [
-    {"id": 1, "part": "LED",       "label": "Step 1: Red LED, long leg (+) in row 10",      "box": [300, 180, 30, 20]},
-    {"id": 2, "part": "Resistor",  "label": "Step 2: 220 ohm resistor, row 10 to GND rail", "box": [300, 220, 80, 15]},
-    {"id": 3, "part": "Capacitor", "label": "Step 3: 100uF cap across 5V and GND rails",    "box": [420, 260, 25, 30]}
-  ]
-}

@@ -1,0 +1,62 @@
+// OWNER: Member 4. Main loop: camera -> tracker -> occlusion -> step. N = next, B = back.
+using UnityEngine;
+using UnityEngine.UI;
+
+public class ARController : MonoBehaviour
+{
+    public RawImage background;            // full-screen RawImage showing the camera feed
+    public Tracker tracker;
+    public HandOcclusion occlusion;
+    public StepManager steps;
+    public Text hud;
+    public int requestedWidth = 640;
+    public int requestedHeight = 480;
+    public int requestedFps = 30;
+    public int cameraIndex = 0;            // 0 = laptop cam, 1 = phone via Iriun/DroidCam
+
+    WebCamTexture cam;
+    Texture2D frame;
+    float fps;
+
+    void Start()
+    {
+        var devices = WebCamTexture.devices;
+        if (devices.Length == 0) { Debug.LogError("No camera found"); enabled = false; return; }
+        int i = Mathf.Clamp(cameraIndex, 0, devices.Length - 1);
+        Debug.Log("Using camera: " + devices[i].name);
+
+        cam = new WebCamTexture(devices[i].name, requestedWidth, requestedHeight, requestedFps);
+        cam.Play();
+        background.texture = cam;
+        frame = new Texture2D(requestedWidth, requestedHeight, TextureFormat.RGBA32, false);
+    }
+
+    void Update()
+    {
+        if (cam == null || !cam.didUpdateThisFrame) return;
+
+        if (frame.width != cam.width || frame.height != cam.height)
+            frame.Reinitialize(cam.width, cam.height);
+        frame.SetPixels32(cam.GetPixels32());
+        frame.Apply(false);
+
+        float[] H = tracker.GetHomography(frame);
+        bool tracking = H != null;
+
+        Vector2[] hull = occlusion.GetHandHull(frame);   // Member 3 feeds this to the stencil mesh
+
+        if (tracking) steps.ShowStep(steps.Current, H);
+        else steps.Hide();
+
+        if (Input.GetKeyDown(KeyCode.N)) steps.Next();
+        if (Input.GetKeyDown(KeyCode.B)) steps.Back();
+
+        fps = Mathf.Lerp(fps, 1f / Mathf.Max(Time.unscaledDeltaTime, 1e-5f), 0.1f);
+        if (hud != null)
+            hud.text = string.Format("Step {0}/{1}: {2} | {3} | hull {4} | {5:0.0} FPS",
+                steps.Current + 1, steps.StepCount, steps.CurrentStep.part,
+                tracking ? "TRACKING" : "SEARCHING", hull.Length, fps);
+    }
+
+    void OnDisable() { if (cam != null) cam.Stop(); }
+}

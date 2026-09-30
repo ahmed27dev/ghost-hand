@@ -1,13 +1,21 @@
+// Shared by everyone. Matches StreamingAssets/steps.json.
+// from/to are reference.jpg pixels, top-left origin.
+//   point steps (LED):            from = long leg (anode), to = short leg (cathode)
+//   arrow steps (resistor, wire): from = start, to = end
+// fromText / toText are optional short tags shown next to the target holes.
 using System;
 
-// SHARED - agreed by all. Do not change without telling the group.
 [Serializable]
 public class Step
 {
     public int id;
-    public string part;     // "LED", "Resistor", "Capacitor"
-    public string label;    // text shown on screen
-    public float[] box;     // [x, y, w, h] in reference.jpg pixels
+    public string part;
+    public string label;
+    public string type;
+    public float[] from;
+    public float[] to;
+    public string fromText;
+    public string toText;
 }
 
 [Serializable]

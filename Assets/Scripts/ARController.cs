@@ -12,18 +12,23 @@ public class ARController : MonoBehaviour
     public int requestedWidth = 640;
     public int requestedHeight = 480;
     public int requestedFps = 30;
-    public int cameraIndex = 0;            // 0 = laptop cam, 1 = phone via Iriun/DroidCam
+    public int cameraIndex = 0;            // see Console on Play for the list of cameras
 
     WebCamTexture cam;
     Texture2D frame;
     float fps;
+    float lastFrameTime = -1f;
 
     void Start()
     {
         var devices = WebCamTexture.devices;
         if (devices.Length == 0) { Debug.LogError("No camera found"); enabled = false; return; }
+
+        for (int d = 0; d < devices.Length; d++)
+            Debug.Log("Camera " + d + ": " + devices[d].name + (devices[d].isFrontFacing ? " (front)" : ""));
+
         int i = Mathf.Clamp(cameraIndex, 0, devices.Length - 1);
-        Debug.Log("Using camera: " + devices[i].name);
+        Debug.Log("Using camera " + i + ": " + devices[i].name);
 
         cam = new WebCamTexture(devices[i].name, requestedWidth, requestedHeight, requestedFps);
         cam.Play();
@@ -33,7 +38,17 @@ public class ARController : MonoBehaviour
 
     void Update()
     {
+        // Keys are checked every Unity frame, not only when a new camera frame arrives.
+        if (Input.GetKeyDown(KeyCode.N)) steps.Next();
+        if (Input.GetKeyDown(KeyCode.B)) steps.Back();
+
         if (cam == null || !cam.didUpdateThisFrame) return;
+
+        // FPS = camera frames actually processed per second
+        float now = Time.realtimeSinceStartup;
+        if (lastFrameTime > 0f)
+            fps = Mathf.Lerp(fps, 1f / Mathf.Max(now - lastFrameTime, 1e-5f), 0.1f);
+        lastFrameTime = now;
 
         if (frame.width != cam.width || frame.height != cam.height)
             frame.Reinitialize(cam.width, cam.height);
@@ -48,10 +63,6 @@ public class ARController : MonoBehaviour
         if (tracking) steps.ShowStep(steps.Current, H);
         else steps.Hide();
 
-        if (Input.GetKeyDown(KeyCode.N)) steps.Next();
-        if (Input.GetKeyDown(KeyCode.B)) steps.Back();
-
-        fps = Mathf.Lerp(fps, 1f / Mathf.Max(Time.unscaledDeltaTime, 1e-5f), 0.1f);
         if (hud != null)
             hud.text = string.Format("Step {0}/{1}: {2} | {3} | hull {4} | {5:0.0} FPS",
                 steps.Current + 1, steps.StepCount, steps.CurrentStep.part,

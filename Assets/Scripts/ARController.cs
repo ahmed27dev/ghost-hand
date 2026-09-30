@@ -58,7 +58,9 @@ public class ARController : MonoBehaviour
         float[] H = tracker.GetHomography(frame);
         bool tracking = H != null;
 
-        Vector2[] hull = occlusion.GetHandHull(frame);   // Member 3 feeds this to the stencil mesh
+        occlusion.SetHomography(H);                      // hand detection compares against the warped sheet
+        Vector2[] hull = occlusion.GetHandHull(frame);   // hull in frame pixels, empty if no hand
+        occlusion.ShowMask(hull);                        // hide the 3D parts under the hand
 
         if (tracking) steps.ShowStep(steps.Current, H);
         else steps.Hide();

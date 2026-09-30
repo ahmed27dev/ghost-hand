@@ -725,11 +725,18 @@ public class StepManager : MonoBehaviour
         label.horizontalOverflow = HorizontalWrapMode.Wrap;
     }
 
-    void BuildSpotlight()
+        void BuildSpotlight()
     {
-        if (background == null) return;
-        spotCanvas = background.canvas != null ? background.canvas.rootCanvas : null;
-        if (spotCanvas == null) return;
+        if (arCamera == null) return;
+
+        // Own canvas just in front of the hand mask (1.0) and the parts (2.0), so the video,
+        // the hand patch and the parts are all darkened the same way: no bright seam around the hand.
+        var go = new GameObject("SpotlightCanvas");
+        spotCanvas = go.AddComponent<Canvas>();
+        spotCanvas.renderMode = RenderMode.ScreenSpaceCamera;
+        spotCanvas.worldCamera = arCamera;
+        spotCanvas.planeDistance = 0.9f;
+        spotCanvas.sortingOrder = 20;
 
         var root = new GameObject("Spotlight", typeof(RectTransform));
         spotRT = root.GetComponent<RectTransform>();
@@ -737,11 +744,8 @@ public class StepManager : MonoBehaviour
         spotRT.anchorMin = Vector2.zero;
         spotRT.anchorMax = Vector2.one;
         spotRT.offsetMin = spotRT.offsetMax = Vector2.zero;
-        // right above the camera feed, below the HUD
-        if (background.transform.parent == spotCanvas.transform)
-            spotRT.SetSiblingIndex(background.transform.GetSiblingIndex() + 1);
 
-        var hole = new GameObject("Hole", typeof(RectTransform), typeof(RawImage));
+        var hole = new GameObject("Hole", typeof(RectTransform), typeof(CanvasRenderer), typeof(RawImage));
         hole.transform.SetParent(spotRT, false);
         spotHoleImg = hole.GetComponent<RawImage>();
         spotHoleImg.texture = MakeSpotTexture(128);
@@ -751,7 +755,7 @@ public class StepManager : MonoBehaviour
 
         for (int k = 0; k < 4; k++)
         {
-            var g = new GameObject("Bar" + k, typeof(RectTransform), typeof(Image));
+            var g = new GameObject("Bar" + k, typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
             g.transform.SetParent(spotRT, false);
             spotBarImgs[k] = g.GetComponent<Image>();
             spotBarImgs[k].raycastTarget = false;

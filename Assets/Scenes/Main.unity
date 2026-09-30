@@ -631,6 +631,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2ee281bc550ac944a62490cd260f9a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  workScale: 0.5
+  diffThreshold: 35
+  crMin: 133
+  crMax: 173
+  cbMin: 77
+  cbMax: 127
+  minAreaFraction: 0.015
+  requireDifference: 1
+  minPieceFraction: 0.002
+  joinDistance: 25
+  holdFrames: 6
+  hideUnderHand: 1
+  maskGrow: 1.08
+  maskDistance: 1
+  showDebugMask: 0
+  debugView: 0
+  lastHullPoints: 0
+  lastAreaFraction: 0
+  lastMs: 0
 --- !u!114 &1588328428
 MonoBehaviour:
   m_ObjectHideFlags: 0

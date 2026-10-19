@@ -1,9 +1,9 @@
-# Ghost-Hand: A Vision-Based AR Assembly Guide for Arduino Circuits
+arduino# Ghost-Hand: A Vision-Based AR Assembly Guide for Arduino Circuits
 
 Ghost-Hand helps a beginner build a circuit on a breadboard. A phone camera watches an Arduino and a breadboard, and a Unity app draws the next step on the live video: a 3D part, rings on the exact holes, labels and wire arrows. The parts hide under the user's hand. Tracking is our own code (ORB, RANSAC homography and Lucas-Kanade optical flow with OpenCvSharp), and no AR SDK such as Vuforia or ARCore is used.
 
 Group 10 | Virtual Reality / Image Processing CA-3 | B.Tech CSE, Symbiosis Institute of Technology, Pune
-Faculty guide: Dr. Shwetambari Chivane
+
 
 ![Step 1: LED](docs/images/step1.jpg)
 

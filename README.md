@@ -1,4 +1,4 @@
-arduino# Ghost-Hand: A Vision-Based AR Assembly Guide for Arduino Circuits
+# Ghost-Hand: A Vision-Based AR Assembly Guide for Arduino Circuits
 
 Ghost-Hand helps a beginner build a circuit on a breadboard. A phone camera watches an Arduino and a breadboard, and a Unity app draws the next step on the live video: a 3D part, rings on the exact holes, labels and wire arrows. The parts hide under the user's hand. Tracking is our own code (ORB, RANSAC homography and Lucas-Kanade optical flow with OpenCvSharp), and no AR SDK such as Vuforia or ARCore is used.
 
@@ -71,7 +71,7 @@ One frame loop passes the same homography H to every module.
 
 | Member | Module         | Files                                                                 | Job                                                      |
 | ------ | -------------- | --------------------------------------------------------------------- | -------------------------------------------------------- |
-| 1      | Tracking       | `Tracker.cs`                                                          | ORB, ratio test, RANSAC, Lucas-Kanade; returns H or null |
+| Ahmed  | Tracking       | `Tracker.cs`                                                  | ORB, ratio test, RANSAC, Lucas-Kanade; returns H or null |
 | 2      | Step guidance  | `StepManager.cs`, `StepData.cs`, `steps.json`, `Editor/StepPicker.cs` | 3D parts, rings, arrows, spotlight, ghosts, labels       |
 | 3      | Hand occlusion | `HandOcclusion.cs`, `HandPatch.cs`                                    | Hand mask, convex hull, hull patch over the parts        |
 | 4      | Integration    | `ARController.cs`                                                     | Camera, main loop, keys, HUD, auto-advance               |
